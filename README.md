@@ -2,15 +2,16 @@ KWNinePatchView
 ===============
 
 ##How-To
-You can either simply drag and drop the `KWSwipePickerView/KWSwipePickerView` folder into your existing project or add the library as a submodule and reference `KWSwipePickerView.xcodeproj` from within your own project.
+You can either simply drag and drop the `KWNinePatchView/KWNinePatchView` folder into your existing project or add the library as a submodule and reference `KWNinePatchView.xcodeproj` from within your own project.
 
 --
-1. `#import "KWSwipePickerView.h"` wherever you require access to it.
+1. `#import "KWNinePatchView.h"` wherever you require access to it.
 
 2. Then, Use!
     ``` objective-c
-    KWSwipePickerView *swipePickerView = [[KWSwipePickerView alloc] initWithFrame:CGRectMake(0, 0, 320, 100)];
-    [self.view addSubview:swipePickerView];
+    KWNinePatchView *ninePatchView = [[KWNinePatchView alloc] initWithImage:[UIImage imageNamed:@"button.png"]];
+    [ninePatchView setFrame:CGRectMake(30, 30, 148, 88)];
+    [self.view addSubview:ninePatchView];
     ```
     
 <br />
@@ -32,7 +33,7 @@ You can either simply drag and drop the `KWSwipePickerView/KWSwipePickerView` fo
 
 > The MIT License (MIT)
 >
->  KWSwipePickerView - Copyright (c) 2013, Jeungwon An (kawoou@kawoou.kr)
+>  KWNinePatchView - Copyright (c) 2013, Jeungwon An (kawoou@kawoou.kr)
 >
 >  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following condi tions:
 >
