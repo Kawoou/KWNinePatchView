@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- KWNinePatchView - Copyright (c) 2013, Jeungwon An (kawoou@kawoou.kr)
+ KWNinePatchView - Copyright (c) 2014, Jeungwon An (kawoou@kawoou.kr)
  
  Permission is hereby granted, free of charge, to any person obtaining a copy of
  this software and associated documentation files (the "Software"), to deal in
@@ -33,7 +33,7 @@
 @property (nonatomic, retain)   UIFont          *font;
 @property (nonatomic, retain)   NSString        *text;
 @property (nonatomic, retain)   UIColor         *textColor;
-@property (nonatomic, assign)   UITextAlignment textAlignment;
+@property (nonatomic, assign)   NSTextAlignment textAlignment;
 
 @end
 
@@ -45,5 +45,13 @@
 - (id)initWithImage:(UIImage *)image;
 - (id)initWithImage:(UIImage *)image andFrame:(CGRect)frame;
 - (id)initWithImage:(UIImage *)image highlightImage:(UIImage *)highlightImage;
+
+@end
+
+#pragma mark - Extended
+@interface KWNinePatchView (KWNinePatchViewExtended)
+
+- (void)addTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
+- (void)removeTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
 
 @end

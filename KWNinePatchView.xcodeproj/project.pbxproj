@@ -17,8 +17,6 @@
 		9DBF6001189A4113002CE5C7 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBF6000189A4113002CE5C7 /* XCTest.framework */; };
 		9DBF6002189A4113002CE5C7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBF5FE7189A4113002CE5C7 /* Foundation.framework */; };
 		9DBF6003189A4113002CE5C7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DBF5FEB189A4113002CE5C7 /* UIKit.framework */; };
-		9DBF600B189A4113002CE5C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9DBF6009189A4113002CE5C7 /* InfoPlist.strings */; };
-		9DBF600D189A4113002CE5C7 /* KWNinePatchViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBF600C189A4113002CE5C7 /* KWNinePatchViewTests.m */; };
 		9DBF6019189A41D0002CE5C7 /* KWNinePatchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBF6018189A41D0002CE5C7 /* KWNinePatchView.m */; };
 		9DBF601C189A6B6D002CE5C7 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DBF601B189A6B6D002CE5C7 /* MainViewController.m */; };
 		9DBF6020189A6FD0002CE5C7 /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DBF601E189A6FD0002CE5C7 /* button.png */; };
@@ -51,9 +49,6 @@
 		9DBF5FF9189A4113002CE5C7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		9DBF5FFF189A4113002CE5C7 /* KWNinePatchViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KWNinePatchViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DBF6000189A4113002CE5C7 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		9DBF6008189A4113002CE5C7 /* KWNinePatchViewTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KWNinePatchViewTests-Info.plist"; sourceTree = "<group>"; };
-		9DBF600A189A4113002CE5C7 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		9DBF600C189A4113002CE5C7 /* KWNinePatchViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KWNinePatchViewTests.m; sourceTree = "<group>"; };
 		9DBF6017189A41D0002CE5C7 /* KWNinePatchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KWNinePatchView.h; path = KWNinePatchView/KWNinePatchView.h; sourceTree = "<group>"; };
 		9DBF6018189A41D0002CE5C7 /* KWNinePatchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KWNinePatchView.m; path = KWNinePatchView/KWNinePatchView.m; sourceTree = "<group>"; };
 		9DBF601A189A6B6D002CE5C7 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
@@ -92,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				9DBF5FED189A4113002CE5C7 /* KWNinePatchView */,
-				9DBF6006189A4113002CE5C7 /* KWNinePatchViewTests */,
 				9DBF5FE6189A4113002CE5C7 /* Frameworks */,
 				9DBF601D189A6FD0002CE5C7 /* Resource */,
 				9DBF5FE5189A4113002CE5C7 /* Products */,
@@ -140,24 +134,6 @@
 				9DBF5FF0189A4113002CE5C7 /* InfoPlist.strings */,
 				9DBF5FF3189A4113002CE5C7 /* main.m */,
 				9DBF5FF5189A4113002CE5C7 /* KWNinePatchView-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		9DBF6006189A4113002CE5C7 /* KWNinePatchViewTests */ = {
-			isa = PBXGroup;
-			children = (
-				9DBF600C189A4113002CE5C7 /* KWNinePatchViewTests.m */,
-				9DBF6007189A4113002CE5C7 /* Supporting Files */,
-			);
-			path = KWNinePatchViewTests;
-			sourceTree = "<group>";
-		};
-		9DBF6007189A4113002CE5C7 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				9DBF6008189A4113002CE5C7 /* KWNinePatchViewTests-Info.plist */,
-				9DBF6009189A4113002CE5C7 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -271,7 +247,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DBF600B189A4113002CE5C7 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +268,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DBF600D189A4113002CE5C7 /* KWNinePatchViewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,14 +286,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				9DBF5FF1189A4113002CE5C7 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		9DBF6009189A4113002CE5C7 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9DBF600A189A4113002CE5C7 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -488,6 +454,7 @@
 				9DBF6012189A4113002CE5C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9DBF6013189A4113002CE5C7 /* Build configuration list for PBXNativeTarget "KWNinePatchViewTests" */ = {
 			isa = XCConfigurationList;
@@ -496,6 +463,7 @@
 				9DBF6015189A4113002CE5C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

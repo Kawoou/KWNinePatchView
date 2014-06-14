@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- KWNinePatchView - Copyright (c) 2013, Jeungwon An (kawoou@kawoou.kr)
+ KWNinePatchView - Copyright (c) 2014, Jeungwon An (kawoou@kawoou.kr)
  
  Permission is hereby granted, free of charge, to any person obtaining a copy of
  this software and associated documentation files (the "Software"), to deal in
@@ -24,6 +24,8 @@
 
 #import "KWNinePatchView.h"
 
+#import <objc/runtime.h>
+
 typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
 {
     KWNinePatchViewCroppedImageDefault = 0,
@@ -31,16 +33,27 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
     KWNinePatchViewCroppedImageCount
 };
 
+@interface KWNinePatchViewTarget : NSObject
+
+@property (nonatomic, retain) id                target;
+@property (nonatomic, retain) NSString          *selector;
+@property (nonatomic, assign) UIControlEvents   controlEvent;
+
+@end
+
 @interface KWNinePatchView()
 {
-    UILabel     *_textLabel;
-    UIButton    *_clearButton;
+    UILabel             *_textLabel;
+    UIView              *_contentView;
     
-    UIImage     *_original[KWNinePatchViewCroppedImageCount];
+    UIImage             *_original[KWNinePatchViewCroppedImageCount];
     
-    UIImage     *_cornerImage[KWNinePatchViewCroppedImageCount][9];
-    CGRect      _cornerRect[KWNinePatchViewCroppedImageCount][10];
-    CGRect      _renderRect[KWNinePatchViewCroppedImageCount][10];
+    UIImage             *_cornerImage[KWNinePatchViewCroppedImageCount][9];
+    CGRect              _cornerRect[KWNinePatchViewCroppedImageCount][10];
+    CGRect              _renderRect[KWNinePatchViewCroppedImageCount][10];
+    
+    NSMutableArray      *_targetList;
+    BOOL                _isDragging;
     
     KWNinePatchViewCroppedImage _currentState;
 }
@@ -58,6 +71,15 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
 - (NSRange)findNinePatchLineWithCount:(NSUInteger)count
                               rawData:(unsigned char *)rawData
                             algorithm:(NSUInteger (^)(NSUInteger))algorithm;
+@end
+
+@implementation KWNinePatchViewTarget
+
+- (id)init
+{
+    return [super init];
+}
+
 @end
 
 @implementation KWNinePatchView
@@ -99,7 +121,7 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
     _textLabel.textColor = textColor;
 }
 
-- (void)setTextAlignment:(UITextAlignment)textAlignment
+- (void)setTextAlignment:(NSTextAlignment)textAlignment
 {
     _textAlignment = textAlignment;
     _textLabel.textAlignment = textAlignment;
@@ -154,6 +176,31 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
     return self;
 }
 
+#pragma mark - Extended
+- (void)addTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents
+{
+    KWNinePatchViewTarget *targets = [[KWNinePatchViewTarget alloc] init];
+    targets.target = target;
+    targets.selector = NSStringFromSelector(action);
+    targets.controlEvent = controlEvents;
+    
+    [_targetList addObject:targets];
+}
+
+- (void)removeTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents
+{
+    for(KWNinePatchViewTarget *targets in _targetList)
+    {
+        if(targets.target == target &&
+           targets.selector == NSStringFromSelector(action) &&
+           targets.controlEvent == controlEvents)
+        {
+            [_targetList removeObject:targets];
+            break;
+        }
+    }
+}
+
 #pragma mark - Override methods
 - (void)setFrame:(CGRect)frame
 {
@@ -167,7 +214,6 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
             frame.size.height = size.height - 2;
     }
     [super setFrame:frame];
-    [_clearButton setFrame:frame];
     
     [self calculateRenderRect];
     [self setNeedsDisplay];
@@ -186,9 +232,76 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
           _renderRect[_currentState][i].size.width,
           _renderRect[_currentState][i].size.height)];
     }
+    [_contentView setFrame:_renderRect[_currentState][9]];
+    [_textLabel setFrame:(CGRect){CGPointZero, _contentView.frame.size}];
     
-    [_textLabel setBounds:_renderRect[_currentState][9]];
-    [_textLabel drawRect:_renderRect[_currentState][9]];
+    [super drawRect:rect];
+}
+
+- (void)addSubview:(UIView *)view
+{
+    [_contentView addSubview:view];
+    [self setNeedsDisplay];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self sendEventToTarget:UIControlEventTouchDown];
+    
+    if([self hitTest:[[touches anyObject] locationInView:self] withEvent:event])
+        [self buttonHighlight:nil];
+    else
+        [self buttonUnhighlight:nil];
+    
+    _isDragging = NO;
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if(_isDragging == NO)
+        [self sendEventToTarget:UIControlEventTouchDragEnter];
+    
+    if([self hitTest:[[touches anyObject] locationInView:self] withEvent:event])
+    {
+        [self sendEventToTarget:UIControlEventTouchDragInside];
+        
+        [self buttonHighlight:nil];
+    }
+    else
+    {
+        [self sendEventToTarget:UIControlEventTouchDragOutside];
+        
+        [self buttonUnhighlight:nil];
+    }
+    
+    _isDragging = YES;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if(_isDragging == YES)
+        [self sendEventToTarget:UIControlEventTouchDragExit];
+    
+    if([self hitTest:[[touches anyObject] locationInView:self] withEvent:event])
+    {
+        [self sendEventToTarget:UIControlEventTouchUpInside];
+    }
+    else
+    {
+        [self sendEventToTarget:UIControlEventTouchUpOutside];
+    }
+    
+    [self buttonUnhighlight:nil];
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if(_isDragging == YES)
+        [self sendEventToTarget:UIControlEventTouchDragExit];
+    
+    [self sendEventToTarget:UIControlEventTouchCancel];
+    
+    [self buttonUnhighlight:nil];
 }
 
 #pragma mark - Private methods
@@ -198,26 +311,17 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
     
     [self setBackgroundColor:[UIColor clearColor]];
     
+    _targetList = [[NSMutableArray alloc] init];
+    
+    _contentView = [[UIView alloc] init];
+    
     _textLabel = [[UILabel alloc] init];
     [_textLabel setText:@""];
     [_textLabel setTextColor:[UIColor whiteColor] ];
     [_textLabel setTextAlignment:NSTextAlignmentCenter];
     
-    _clearButton = [[UIButton alloc] init];
-    [_clearButton setBackgroundColor:[UIColor clearColor]];
-    [_clearButton addTarget:self action:@selector(buttonHighlight:)
-           forControlEvents:UIControlEventTouchDown];
-    [_clearButton addTarget:self action:@selector(buttonHighlight:)
-           forControlEvents:UIControlEventTouchDragInside];
-    [_clearButton addTarget:self action:@selector(buttonUnhighlight:)
-           forControlEvents:UIControlEventTouchUpInside];
-    [_clearButton addTarget:self action:@selector(buttonUnhighlight:)
-           forControlEvents:UIControlEventTouchUpOutside];
-    [_clearButton addTarget:self action:@selector(buttonUnhighlight:)
-           forControlEvents:UIControlEventTouchDragOutside];
-    [_clearButton addTarget:self action:@selector(buttonUnhighlight:)
-           forControlEvents:UIControlEventTouchCancel];
-    [self addSubview:_clearButton];
+    [_contentView addSubview:_textLabel];
+    [super addSubview:_contentView];
     
     _currentState = KWNinePatchViewCroppedImageDefault;
     for(i = 0; i < KWNinePatchViewCroppedImageCount; i ++)
@@ -256,6 +360,28 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
     {
         [self calculateRenderRect];
         [self setNeedsDisplay];
+    }
+}
+
+- (void)sendEventToTarget:(UIControlEvents)controlEvent
+{
+    for(KWNinePatchViewTarget *targets in _targetList)
+    {
+        id tar = targets.target;
+        SEL sel = NSSelectorFromString(targets.selector);
+        UIControlEvents evt = targets.controlEvent;
+        
+        if(evt == controlEvent ||
+           evt == UIControlEventAllTouchEvents ||
+           evt == UIControlEventAllEvents)
+        {
+            CLANG_PUSH(-Warc-performSelector-leaks)
+            
+            if([tar respondsToSelector:sel])
+                [tar performSelector:sel withObject:self];
+            
+            CLANG_POP
+        }
     }
 }
 
@@ -426,7 +552,7 @@ typedef NS_ENUM(NSUInteger, KWNinePatchViewCroppedImage)
 
 - (bool)isTransparentAtPoint:(NSUInteger)point rawData:(unsigned char *)rawData
 {
-    int byteIndex = point;
+    int byteIndex = (int)point;
     int red = rawData[byteIndex];
     int green = rawData[byteIndex + 1];
     int blue = rawData[byteIndex + 2];
